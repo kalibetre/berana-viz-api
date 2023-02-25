@@ -1,0 +1,15 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "4.1.7"
+django-environ = "*"
+
+[dev-packages]
+pycodestyle = "2.10.0"
+yapf = "0.32.0"
+
+[requires]
+python_version = "3.10"
