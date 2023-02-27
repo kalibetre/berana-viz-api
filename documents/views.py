@@ -1,7 +1,9 @@
 from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet, ModelViewSet
 
 from core.models import User
+from documents.permissions import IsOwner, IsSelf
 
 from .models import Document
 from .serializer import DocumentOwnerSerializer, DocumentSerializer
@@ -13,8 +15,10 @@ class DocumentViewSet(ModelViewSet):
     `partial_update()`, `destroy()` and `list()` actions for Document instances
     """
     serializer_class = DocumentSerializer
-    queryset = Document.objects.all()
-    lookup_field = "uid"
+    permission_classes = [IsAuthenticated, IsOwner]
+
+    def get_queryset(self):
+        return Document.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -30,6 +34,7 @@ class DocumentOwnerViewSet(RetrieveModelMixin, GenericViewSet):
     """
     serializer_class = DocumentOwnerSerializer
     queryset = User.objects.all()
+    permission_classes = [IsAuthenticated, IsSelf]
 
     def get_serializer_context(self):
         return {'request': self.request}
