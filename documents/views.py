@@ -1,7 +1,10 @@
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
+
+from core.models import User
 
 from .models import Document
-from .serializer import DocumentSerializer
+from .serializer import DocumentOwnerSerializer, DocumentSerializer
 
 
 class DocumentViewSet(ModelViewSet):
@@ -12,6 +15,9 @@ class DocumentViewSet(ModelViewSet):
     serializer_class = DocumentSerializer
     queryset = Document.objects.all()
     lookup_field = "uid"
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_serializer_context(self):
         return {'request': self.request}
