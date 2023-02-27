@@ -18,6 +18,7 @@ class Document(models.Model):
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
+        related_name='documents',
         on_delete=models.CASCADE,
     )
     version = models.IntegerField(default=1)
