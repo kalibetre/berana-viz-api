@@ -26,7 +26,7 @@ class Document(models.Model):
     description = models.TextField(blank=True)
     modified = models.DateTimeField(auto_now=True, editable=False)
     created = models.DateTimeField(auto_now_add=True, editable=False)
-    content = models.JSONField(blank=True, validators=[nodes_validator])
+    content = models.JSONField(validators=[nodes_validator])
 
     def __str__(self):
         return self.title
