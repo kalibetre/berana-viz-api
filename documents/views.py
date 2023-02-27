@@ -21,3 +21,15 @@ class DocumentViewSet(ModelViewSet):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+
+class DocumentOwnerViewSet(RetrieveModelMixin, GenericViewSet):
+    """
+    A viewset that provides `retrieve()` action for a user (document owner)
+    instances
+    """
+    serializer_class = DocumentOwnerSerializer
+    queryset = User.objects.all()
+
+    def get_serializer_context(self):
+        return {'request': self.request}
