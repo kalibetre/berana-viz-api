@@ -3,14 +3,13 @@ import uuid
 from django.conf import settings
 from django.db import models
 
+from documents.validators import nodes_validator
+
 
 class Document(models.Model):
     """Document Data Model
-    Represents a data structure document that contains all the node values
-    as well as additional metadata
-
-    Args:
-        models (_type_): _description_
+    A Document class that represents a data structure document that contains
+    all the node values as well as additional metadata
     """
     uid = models.UUIDField(
         primary_key=True,
@@ -24,9 +23,9 @@ class Document(models.Model):
     version = models.IntegerField(default=1)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    modified = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
-    content = models.JSONField(blank=True)
+    modified = models.DateTimeField(auto_now=True, editable=False)
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    content = models.JSONField(blank=True, validators=[nodes_validator])
 
     def __str__(self):
         return self.title
