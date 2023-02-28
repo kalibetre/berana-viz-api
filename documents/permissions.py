@@ -16,12 +16,3 @@ class IsOwner(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return obj.user == request.user
-
-
-class IsSelf(BasePermission):
-    """
-    Custom permission to only allow access user info to the user
-    """
-
-    def has_object_permission(self, request, view, obj):
-        return obj.uid == request.user.uid
