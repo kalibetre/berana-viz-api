@@ -12,14 +12,14 @@ class FirebaseAuthentication(TokenAuthentication):
     def authenticate_credentials(self, key):
         try:
             user_token = firebase_admin.auth.verify_id_token(key)
-            email = user_token["email"]
+            email = user_token['email']
+            uid = user_token["uid"]
         except Exception:
             raise exceptions.AuthenticationFailed('Invalid token.')
 
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            raise exceptions.AuthenticationFailed('Invalid token.')
+        user, created = User.objects.get_or_create(auth_id=uid,
+                                                   email=email,
+                                                   username=email)
 
         if not user.is_active:
             raise exceptions.AuthenticationFailed('User inactive or deleted.')
