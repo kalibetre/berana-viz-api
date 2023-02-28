@@ -35,4 +35,4 @@ class Document(models.Model):
         db_table = 'document'
         verbose_name_plural = "Documents"
         indexes = [models.Index(fields=['title'])]
-        ordering = ['modified', 'title']
+        ordering = ['-created', 'title']
