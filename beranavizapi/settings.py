@@ -2,15 +2,20 @@
 Django settings for beranavizapi project.
 """
 
+import base64
+import json
 from pathlib import Path
 
 import environ
+import firebase_admin
+from django.conf import settings
+from firebase_admin import credentials
 
 # Base Directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Environment Variables
-env = environ.Env(SECRET_KEY=(str), DEBUG=(bool))
+env = environ.Env(SECRET_KEY=(str), DEBUG=(bool), GOOGLE_SERVICE_KEY=(str))
 environ.Env.read_env(BASE_DIR / '.env')
 
 SECRET_KEY = env('SECRET_KEY')
@@ -18,6 +23,7 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = env('ALLOWED_HOSTS').split(',')
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -30,6 +36,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -38,6 +45,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOWED_ORIGINS = env('ALLOWED_ORIGINS').split(',')
 
 ROOT_URLCONF = 'beranavizapi.urls'
 
@@ -118,3 +128,16 @@ INTERNAL_IPS = [
 ]
 
 AUTH_USER_MODEL = "core.User"
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'core.authentication.FirebaseAuthentication',
+    ]
+}
+
+# Firebase App
+GOOGLE_SERVICE_KEY = env('GOOGLE_SERVICE_KEY')[2:-1]
+
+service_key = json.loads(base64.b64decode(GOOGLE_SERVICE_KEY).decode('utf-8'))
+firebase_cred = credentials.Certificate(service_key)
+firebase_admin.initialize_app(firebase_cred)

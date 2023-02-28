@@ -15,4 +15,5 @@ class User(AbstractUser):
         default=uuid.uuid4,
         editable=False,
     )
+    auth_id = models.CharField(max_length=255, unique=True)
     email = models.EmailField(unique=True)
